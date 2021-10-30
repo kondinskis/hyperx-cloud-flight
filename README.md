@@ -4,7 +4,7 @@
 
 Simple tray application which shows battery level for <em>[HyperX Cloud Flight Wireless Headset.](https://www.hyperxgaming.com/unitedstates/us/headsets/cloud-flight-wireless-gaming-headset)</em>
 
-## Screenshoots
+## Screenshots
 
 <p align="center">
     <img width="200" alt="HyperX Cloud Flight" src="./images/screenshot.png">
