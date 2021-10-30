@@ -1,5 +1,6 @@
 use hidapi::{HidApi, HidDevice};
-use log::debug;
+use log::{debug, info};
+use std::cell::Cell;
 
 const VENDOR_ID: u16 = 0x0951;
 const PRODUCT_ID: u16 = 0x16c4;
@@ -41,7 +42,7 @@ fn battery_percent(charge_state: u8, value: u8) -> u8 {
     }
 }
 
-pub enum EventType {
+pub enum Event {
     Battery { value: u8 },
     BatteryCharging,
     VolumeUp,
@@ -54,6 +55,10 @@ pub enum EventType {
 }
 pub struct CloudFlight {
     device: HidDevice,
+    pub powered: Cell<bool>,
+    pub muted: Cell<bool>,
+    pub charging: Cell<bool>,
+    pub battery: Cell<u8>,
 }
 impl CloudFlight {
     pub fn new() -> Self {
@@ -61,9 +66,13 @@ impl CloudFlight {
 
         CloudFlight {
             device: api.open(VENDOR_ID, PRODUCT_ID).unwrap(),
+            powered: Cell::new(true),
+            muted: Cell::new(false),
+            charging: Cell::new(false),
+            battery: Cell::new(100),
         }
     }
-    pub fn read(&self) -> EventType {
+    pub fn read(&self) -> Event {
         let mut buf = [0u8; 32];
         let bytes = self.device.read_timeout(&mut buf, 500).unwrap();
         debug!("Read: {}, {:02x?}", bytes, buf);
@@ -72,37 +81,54 @@ impl CloudFlight {
                 if buf[0] == 0x64 {
                     if buf[1] == 0x01 {
                         self.battery();
-                        return EventType::PowerOn;
+                        self.powered.set(true);
+                        info!("Power on");
+                        return Event::PowerOn;
                     } else if buf[1] == 0x03 {
-                        return EventType::PowerOff;
+                        self.powered.set(false);
+                        info!("Power off");
+                        return Event::PowerOff;
                     }
                 }
                 if buf[0] == 0x65 {
                     if buf[1] == 0x04 {
-                        return EventType::Muted;
+                        self.muted.set(true);
+                        info!("Muted");
+                        return Event::Muted;
                     } else {
-                        return EventType::Unmuted;
+                        self.muted.set(false);
+                        info!("Unmuted");
+                        return Event::Unmuted;
                     }
                 }
-                return EventType::Ignored;
+                return Event::Ignored;
             }
             5 => {
                 if buf[1] == 0x01 {
-                    return EventType::VolumeUp;
+                    info!("Volume up");
+                    return Event::VolumeUp;
                 } else if buf[1] == 0x02 {
-                    return EventType::VolumeDown;
+                    info!("Volume down");
+                    return Event::VolumeDown;
                 }
-                return EventType::Ignored;
+                return Event::Ignored;
             }
             20 => {
-                if (buf[3] == 0x10 || buf[3] == 0x11) && buf[4] >= 20 {
-                    return EventType::BatteryCharging;
+                if buf[3] == 0x10 || buf[3] == 0x11 {
+                    info!("Battery charging");
+                    self.charging.set(true);
+                    if buf[4] >= 20 {
+                        return Event::BatteryCharging;
+                    }
+                    return Event::Battery { value: 100 };
                 }
-                return EventType::Battery {
-                    value: battery_percent(buf[3], buf[4]),
-                };
+                let b_percent = battery_percent(buf[3], buf[4]);
+                info!("Battery {}", b_percent);
+                self.charging.set(false);
+                self.battery.set(b_percent);
+                return Event::Battery { value: b_percent };
             }
-            _ => return EventType::Ignored,
+            _ => return Event::Ignored,
         }
     }
     pub fn battery(&self) {

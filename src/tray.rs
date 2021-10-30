@@ -1,3 +1,4 @@
+use ksni::menu::StandardItem;
 use ksni::ToolTip;
 use std::sync::Arc;
 use std::vec::Vec;
@@ -14,29 +15,56 @@ const HEADPHONES_BATTERY_CAUTION: &str = "battery-010";
 const HEADPHONES_BATTERY_EMPTY: &str = "battery-empty.svg";
 
 pub struct Tray {
-    pub muted: bool,
-    pub battery: u8,
     cf: Arc<cloud_flight::CloudFlight>,
 }
 
 impl ksni::Tray for Tray {
     fn icon_name(&self) -> String {
-        if self.muted {
+        if self.cf.muted.get() {
             HEADPHONES_MUTED.to_string()
+        } else if self.cf.charging.get() {
+            HEADPHONES_BATTERY_CHARGING.to_string()
         } else {
-            battery_icon(self.battery).into()
+            match self.cf.battery.get() {
+                0..=19 => HEADPHONES_BATTERY_CAUTION,
+                20..=39 => HEADPHONES_BATTERY_LOW,
+                40..=59 => HEADPHONES_BATTERY_MEDIUM,
+                60..=89 => HEADPHONES_BATTERY_GOOD,
+                90..=100 => HEADPHONES_BATTERY_FULL,
+                _ => HEADPHONES_BATTERY_EMPTY,
+            }
+            .to_string()
         }
     }
     fn tool_tip(&self) -> ToolTip {
+        let description: String;
+        if self.cf.charging.get() {
+            description = format!("Charging battery");
+        } else {
+            description = format!("Battery: {}%", self.cf.battery.get());
+        }
         ToolTip {
             title: "HyperX Cloud Flight".into(),
-            description: format!("Battery: {}%", self.battery),
+            description: description,
             icon_name: "".into(),
             icon_pixmap: Vec::new(),
         }
     }
     fn menu(&self) -> Vec<ksni::MenuItem<Self>> {
-        use ksni::menu::*;
+        let muted_text: String;
+        if self.cf.muted.get() {
+            muted_text = "Yes".into();
+        } else {
+            muted_text = "No".into();
+        }
+
+        let battery_text: String;
+        if self.cf.charging.get() {
+            battery_text = "Battery charging".into();
+        } else {
+            battery_text = format!("Battery level: {}", self.cf.battery.get());
+        }
+
         vec![
             StandardItem {
                 label: "HyperX Cloud Flight".into(),
@@ -44,12 +72,12 @@ impl ksni::Tray for Tray {
             }
             .into(),
             StandardItem {
-                label: format!("Muted: {}", self.muted),
+                label: format!("Muted: {}", muted_text),
                 ..Default::default()
             }
             .into(),
             StandardItem {
-                label: format!("Battery level: {}", self.battery),
+                label: battery_text,
                 activate: {
                     let cf = self.cf.clone();
                     Box::new(move |_| cf.clone().battery())
@@ -73,29 +101,12 @@ pub struct TrayService {
 
 impl TrayService {
     pub fn new(cf: Arc<cloud_flight::CloudFlight>) -> Self {
-        let svc = ksni::TrayService::new(Tray {
-            muted: false,
-            battery: 100,
-            cf: cf,
-        });
+        let svc = ksni::TrayService::new(Tray { cf: cf });
         let handle = svc.handle();
         svc.spawn();
         TrayService { handle: handle }
     }
-    pub fn update<F: Fn(&mut Tray)>(&self, f: F) {
-        self.handle.update(f);
+    pub fn update(&self) {
+        self.handle.update(|_: &mut Tray| {});
     }
-}
-
-fn battery_icon(battery: u8) -> String {
-    match battery {
-        0..=19 => HEADPHONES_BATTERY_CAUTION,
-        20..=39 => HEADPHONES_BATTERY_LOW,
-        40..=59 => HEADPHONES_BATTERY_MEDIUM,
-        60..=89 => HEADPHONES_BATTERY_GOOD,
-        90..=100 => HEADPHONES_BATTERY_FULL,
-        101 => HEADPHONES_BATTERY_CHARGING,
-        _ => HEADPHONES_BATTERY_EMPTY,
-    }
-    .to_string()
 }
