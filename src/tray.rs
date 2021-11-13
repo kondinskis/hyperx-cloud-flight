@@ -5,7 +5,7 @@ use std::vec::Vec;
 
 use crate::cloud_flight;
 
-const HEADPHONES_MUTED: &str = "audio-input-microphone-muted";
+const HEADPHONES_MUTED: &str = "microphone-sensitivity-muted";
 const HEADPHONES_BATTERY_CHARGING: &str = "battery-060-charging";
 const HEADPHONES_BATTERY_FULL: &str = "audio-headphones";
 const HEADPHONES_BATTERY_GOOD: &str = "audio-headphones";
