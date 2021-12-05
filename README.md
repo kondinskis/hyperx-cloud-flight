@@ -20,6 +20,7 @@ Create new file in `/etc/udev/rules.d/99-hyperx-cloud-flight.rules` and place th
 
 ```
 KERNEL=="hidraw*", ATTRS{busnum}=="1", ATTRS{idVendor}=="0951", ATTRS{idProduct}=="16c4", MODE="0666"
+KERNEL=="hidraw*", ATTRS{busnum}=="1", ATTRS{idVendor}=="0951", ATTRS{idProduct}=="1723", MODE="0666"
 ```
 
 Once created replug the wireless dongle.
@@ -29,7 +30,7 @@ Once created replug the wireless dongle.
 Download the latest binary from the releases and run it.
 
 ```console
-foo@bar:~$ curl -LO https://github.com/kondinskis/hyperx-cloud-flight/releases/download/0.1.2/cloud-flight_amd64
+foo@bar:~$ curl -LO https://github.com/kondinskis/hyperx-cloud-flight/releases/download/0.1.4/cloud-flight_amd64
 foo@bar:~$ chmod +x cloud-flight_amd64
 foo@bar:~$ ./cloud-flight_amd64
 ```

@@ -3,7 +3,7 @@ use log::{debug, info};
 use std::cell::Cell;
 
 const VENDOR_ID: u16 = 0x0951;
-const PRODUCT_ID: u16 = 0x16c4;
+const PRODUCT_IDS: [u16; 2] = [0x1723, 0x16c4];
 
 const BATTERY_TRIGGER_PACKET: [u8; 20] = {
     let mut buf = [0; 20];
@@ -64,8 +64,19 @@ impl CloudFlight {
     pub fn new() -> Self {
         let api = HidApi::new().unwrap();
 
+        let device = PRODUCT_IDS
+            .iter()
+            .map(|pid| api.open(VENDOR_ID, *pid))
+            .filter(|device| device.is_ok())
+            .map(|device| device.unwrap())
+            .last();
+
+        if device.is_none() {
+            panic!("Not found any compatible device");
+        }
+
         CloudFlight {
-            device: api.open(VENDOR_ID, PRODUCT_ID).unwrap(),
+            device: device.unwrap(),
             powered: Cell::new(true),
             muted: Cell::new(false),
             charging: Cell::new(false),
