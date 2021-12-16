@@ -93,6 +93,9 @@ impl ksni::Tray for Tray {
             .into(),
         ]
     }
+    fn id(&self) -> String {
+        "hyperx".to_string()
+    }
 }
 
 pub struct TrayService {
