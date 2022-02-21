@@ -16,6 +16,24 @@ Simple tray application which shows battery level for <em>[HyperX Cloud Flight W
 
 ### Prerequisites
 
+#### hidraw
+
+Make sure you have hidraw installed on your system.
+
+- Debian/Ubuntu
+
+```
+sudo apt install libhidapi-hidraw0
+```
+
+- Arch
+
+```
+sudo pacman -S hidapi
+```
+
+#### udev
+
 Create new file in `/etc/udev/rules.d/99-hyperx-cloud-flight.rules` and place the following content:
 
 ```
