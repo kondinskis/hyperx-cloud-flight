@@ -48,7 +48,7 @@ Once created replug the wireless dongle.
 Download the latest binary from the releases and run it.
 
 ```console
-foo@bar:~$ curl -LO https://github.com/kondinskis/hyperx-cloud-flight/releases/download/0.1.4/cloud-flight_amd64
+foo@bar:~$ curl -LO https://github.com/kondinskis/hyperx-cloud-flight/releases/download/0.1.5/cloud-flight_amd64
 foo@bar:~$ chmod +x cloud-flight_amd64
 foo@bar:~$ ./cloud-flight_amd64
 ```
