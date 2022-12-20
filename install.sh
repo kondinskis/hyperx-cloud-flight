@@ -20,9 +20,9 @@ Name=Cloud Flight Tray Icon
 '>/home/$USER/.config/autostart/cloud-flight-tray-icon.desktop
 
 # Allow non root user to control the headset from the app
-sudo echo $'KERNEL=="hidraw*", ATTRS{idVendor}=="0951", ATTRS{idProduct}=="16c4", MODE="0666"
+echo $'KERNEL=="hidraw*", ATTRS{idVendor}=="0951", ATTRS{idProduct}=="16c4", MODE="0666"
 KERNEL=="hidraw*", ATTRS{idVendor}=="0951", ATTRS{idProduct}=="1723", MODE="0666"
-KERNEL=="hidraw*", ATTRS{idVendor}=="0951", ATTRS{idProduct}=="1749", MODE="0666"'>/etc/udev/rules.d/99-hyperx-cloud-flight.rules
+KERNEL=="hidraw*", ATTRS{idVendor}=="0951", ATTRS{idProduct}=="1749", MODE="0666"'| sudo tee -a /etc/udev/rules.d/99-hyperx-cloud-flight.rules
 
 # Alert user to unplug and replug the usb dongle
 clear
