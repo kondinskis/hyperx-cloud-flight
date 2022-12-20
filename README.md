@@ -38,7 +38,7 @@ Create new file in `/etc/udev/rules.d/99-hyperx-cloud-flight.rules` and place th
 
 ```
 KERNEL=="hidraw*", ATTRS{idVendor}=="0951", ATTRS{idProduct}=="16c4", MODE="0666"
-KERNEL=="hidraw*", ATTRS{idVendor}=="0951", ATTRS{idProduct}=="1723", MODE="0666"
+KERNEL=="hidraw*", ATTRS{idVendor}=="0951", ATTRS{idProduct}=="1749", MODE="0666"
 ```
 
 Once created replug the wireless dongle.
