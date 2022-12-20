@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Simple tray application which shows battery level for <em>[HyperX Cloud Flight Wireless Headset.](https://www.hyperxgaming.com/unitedstates/us/headsets/cloud-flight-wireless-gaming-headset)</em>
+Simple tray application which shows battery level for <em>[HyperX Cloud Flight Wireless Headset](https://www.hyperxgaming.com/unitedstates/us/headsets/cloud-flight-wireless-gaming-headset)</em> and <em>[HyperX Cloud Flight Wireless Headset for PS.](https://hyperx.com/products/hyperx-cloud-flight-ps5?variant=42020120002717)</em>
 
 ## Screenshots
 
@@ -11,55 +11,17 @@ Simple tray application which shows battery level for <em>[HyperX Cloud Flight W
     <img width="200" alt="HyperX Cloud Flight" src="./images/screenshot_2.png">
 </p>
 
-## Getting Started
+### Supported operating systems
 
-
-### Prerequisites
-
-#### hidraw
-
-Make sure you have hidraw installed on your system.
-
-- Debian/Ubuntu
-
-```
-sudo apt install libhidapi-hidraw0
-```
-
-- Arch
-
-```
-sudo pacman -S hidapi
-```
-
-#### udev
-
-Create new file in `/etc/udev/rules.d/99-hyperx-cloud-flight.rules` and place the following content:
-
-```
-KERNEL=="hidraw*", ATTRS{idVendor}=="0951", ATTRS{idProduct}=="16c4", MODE="0666"
-KERNEL=="hidraw*", ATTRS{idVendor}=="0951", ATTRS{idProduct}=="1749", MODE="0666"
-```
-
-Once created replug the wireless dongle.
+- Ubuntu 22.04 or any distro based on it.
 
 ### Installation
 
-Download the latest binary from the releases and run it.
+Just run in your terminal:
 
 ```console
-foo@bar:~$ curl -LO https://github.com/kondinskis/hyperx-cloud-flight/releases/download/0.1.5/cloud-flight_amd64
-foo@bar:~$ chmod +x cloud-flight_amd64
-foo@bar:~$ ./cloud-flight_amd64
+curl -s https://raw.githubusercontent.com/begati/hyperx-cloud-flight-tray-icon/main/install.sh | bash
 ```
-
-### Supported operating systems
-
-- Linux 
-
-## Help
-
-Feel free to [report any issues](https://github.com/kondinskis/hyperx-cloud-flight/issues) you may have while using this application.
 
 ## License
 
