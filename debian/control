@@ -1,0 +1,18 @@
+Source: hyperx-cloud-flight
+Section: graphics
+Priority: optional
+Maintainer: Stefan Kondinski <kondinskis@gmail.com>
+X-Cargo-Crate: cloud-flight
+Build-Depends:
+  debhelper (>= 9),
+  dh-cargo,
+  libdbus-1-dev,
+  libhidapi-dev,
+  pkg-config,
+
+Package: hyperx-cloud-flight
+Architecture: any
+Depends:
+  ${misc:Depends},
+  libhidapi-hidraw0
+Description: Battery display utility for HyperX Cloud Flight headsets

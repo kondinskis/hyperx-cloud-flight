@@ -11,3 +11,11 @@ ksni = "0.2.0"
 log = { version = "0.4", features = ["max_level_info", "release_max_level_info"] }
 hidapi = { version = "1.2.6", default-features = false, features = ["linux-shared-hidraw"] }
 simple_logger = "1.13.0"
+
+[[bin]]
+name = "cloud-flight"
+path = "src/main.rs"
+
+[[bin]]
+name = "cloud-flight-cli"
+path = "src/cli.rs"

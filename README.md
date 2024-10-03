@@ -44,6 +44,7 @@ KERNEL=="hidraw*", ATTRS{idVendor}=="0951", ATTRS{idProduct}=="1723", MODE="0666
 Once created replug the wireless dongle.
 
 ### Installation
+#### Direct download
 
 Download the latest binary from the releases and run it.
 
@@ -52,6 +53,18 @@ foo@bar:~$ curl -LO https://github.com/kondinskis/hyperx-cloud-flight/releases/d
 foo@bar:~$ chmod +x cloud-flight_amd64
 foo@bar:~$ ./cloud-flight_amd64
 ```
+
+#### Building your own Debian package
+
+```bash
+version="$(awk 'NR==1 {print $2}' debian/changelog | tr -d '()')"
+docker build .
+id="$(docker create "$(docker image list | awk 'NR==2 {print $3}')")"
+docker cp "${id}:/hyperx-cloud-flight_${version}_$(dpkg --print-architecture).deb" .
+docker rm -v "$id"
+```
+
+If the build is successful, you will find your binary package in the current directory.
 
 ### Supported operating systems
 
